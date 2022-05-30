@@ -18,7 +18,8 @@ dependencies:
   colorize: ^3.0.0
   dio: ^4.0.4
   flutter_app_builder: ^0.2.1
-  flutter_app_packager: ^0.2.1
+  flutter_app_packager:
+    path: ../flutter_app_packager
   flutter_app_publisher: ^0.2.0
   logging: ^1.0.2
   path: ^1.8.1

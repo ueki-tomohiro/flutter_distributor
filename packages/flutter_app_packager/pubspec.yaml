@@ -12,7 +12,8 @@ dependencies:
   app_package_maker_apk: ^0.2.1
   app_package_maker_deb: ^0.2.1
   app_package_maker_dmg: ^0.2.1
-  app_package_maker_exe: ^0.2.1
+  app_package_maker_exe:
+    path: ../app_package_maker_exe
   app_package_maker_ipa: ^0.2.1
   app_package_maker_msix: ^0.2.1
   app_package_maker_zip: ^0.2.1
