@@ -43,7 +43,7 @@ Name: "{autoprograms}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"
 Name: "{autodesktop}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; Tasks: desktopicon
 Name: "{userstartup}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; WorkingDir: "{app}"; Tasks: launchAtStartup
 [Run]
-Filename: "{app}\\{{EXECUTABLE_NAME}}"; Description: "{cm:LaunchProgram,{{DISPLAY_NAME}}}"; Flags: {{% if PRIVILEGES_REQUIRED == 'admin' %}}runascurrentuser{{% endif %}} nowait postinstall skipifsilent
+Filename: "{app}\\{{EXECUTABLE_NAME}}"; Description: "{cm:LaunchProgram,{{DISPLAY_NAME}}}"; Flags: {% if PRIVILEGES_REQUIRED == 'admin' %}runascurrentuser{% endif %} nowait postinstall skipifsilent
 """;
 
 class InnoSetupScript {
@@ -76,8 +76,8 @@ class InnoSetupScript {
       'SOURCE_DIR': makeConfig.sourceDir,
       'OUTPUT_BASE_FILENAME': makeConfig.outputBaseFileName,
       'LOCALES': makeConfig.locales,
-      'SETUP_ICON_FILE': makeConfig.setupIconFile ?? ""
-      'PRIVILEGES_REQUIRED': makeCOnfig.privilegesRequired ?? "none"
+      'SETUP_ICON_FILE': makeConfig.setupIconFile ?? "",
+      'PRIVILEGES_REQUIRED': makeConfig.privilegesRequired ?? "none"
     }..removeWhere((key, value) => value == null);
 
     Context context = Context.create();
