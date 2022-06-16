@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:liquid_engine/liquid_engine.dart';
 
 import '../make_exe_config.dart';
@@ -14,13 +15,17 @@ AppPublisher={{PUBLISHER_NAME}}
 AppPublisherURL={{PUBLISHER_URL}}
 AppSupportURL={{PUBLISHER_URL}}
 AppUpdatesURL={{PUBLISHER_URL}}
-DefaultDirName={autopf}\\{{INSTALL_DIR_NAME}}
+DefaultDirName={{INSTALL_DIR_NAME}}
 DisableProgramGroupPage=yes
 OutputDir=.
 OutputBaseFilename={{OUTPUT_BASE_FILENAME}}
 Compression=lzma
 SolidCompression=yes
+SetupIconFile={{SETUP_ICON_FILE}}
 WizardStyle=modern
+PrivilegesRequired={{PRIVILEGES_REQUIRED}}
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 {% for locale in LOCALES %}
@@ -37,11 +42,11 @@ Source: "{{SOURCE_DIR}}\\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdi
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\\{{APP_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"
-Name: "{autodesktop}\\{{APP_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; Tasks: desktopicon
-Name: "{userstartup}\\{{APP_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; WorkingDir: "{app}"; Tasks: launchAtStartup
+Name: "{autoprograms}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"
+Name: "{autodesktop}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; Tasks: desktopicon
+Name: "{userstartup}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; WorkingDir: "{app}"; Tasks: launchAtStartup
 [Run]
-Filename: "{app}\\{{EXECUTABLE_NAME}}"; Description: "{cm:LaunchProgram,{{DISPLAY_NAME}}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\\{{EXECUTABLE_NAME}}"; Description: "{cm:LaunchProgram,{{DISPLAY_NAME}}}"; Flags: {% if PRIVILEGES_REQUIRED == 'admin' %}runascurrentuser{% endif %} nowait postinstall skipifsilent
 """;
 
 class InnoSetupScript {
@@ -74,14 +79,25 @@ class InnoSetupScript {
       'SOURCE_DIR': makeConfig.sourceDir,
       'OUTPUT_BASE_FILENAME': makeConfig.outputBaseFileName,
       'LOCALES': makeConfig.locales,
+      'SETUP_ICON_FILE': makeConfig.setupIconFile ?? "",
+      'PRIVILEGES_REQUIRED': makeConfig.privilegesRequired ?? "none"
     }..removeWhere((key, value) => value == null);
 
     Context context = Context.create();
     context.variables = variables;
 
+    String scriptTemplate = _template;
+    if (makeConfig.scriptTemplate != null) {
+      File scriptTemplateFile = File(path.join(
+        'windows/packaging/exe/',
+        makeConfig.scriptTemplate!,
+      ));
+      scriptTemplate = scriptTemplateFile.readAsStringSync();
+    }
+
     Template template = Template.parse(
       context,
-      Source.fromString(_template),
+      Source.fromString(scriptTemplate),
     );
 
     String content = '\uFEFF' + await template.render(context);
