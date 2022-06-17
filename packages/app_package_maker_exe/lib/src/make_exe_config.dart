@@ -15,6 +15,9 @@ class MakeExeConfig extends MakeConfig {
   String? installDirName;
   String? setupIconFile;
   String? privilegesRequired;
+  String? programParameters;
+  String? desktopParameters;
+  String? startupParameters;
   List<String>? locales;
 
   String get defaultExecutableName {
@@ -44,6 +47,9 @@ class MakeExeConfig extends MakeConfig {
     this.installDirName,
     this.setupIconFile,
     this.privilegesRequired,
+    this.programParameters,
+    this.desktopParameters,
+    this.startupParameters,
     this.locales,
   });
 
@@ -64,6 +70,9 @@ class MakeExeConfig extends MakeConfig {
       installDirName: json['install_dir_name'],
       setupIconFile: json['setup_icon_file'],
       privilegesRequired: json['privileges_required'],
+      programParameters: json['program_parameters'],
+      desktopParameters: json['desktop_parameters'],
+      startupParameters: json['startup_parameters'],
       locales: locales,
     );
     return makeExeConfig;
@@ -84,6 +93,9 @@ class MakeExeConfig extends MakeConfig {
       'install_dir_name': installDirName,
       'setup_icon_file': setupIconFile,
       'privileges_required': privilegesRequired,
+      'program_parameters': programParameters,
+      'desktop_parameters': desktopParameters,
+      'startup_parameters': startupParameters,
       'locales': locales,
     }..removeWhere((key, value) => value == null);
   }

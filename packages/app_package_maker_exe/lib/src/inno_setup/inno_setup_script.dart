@@ -42,9 +42,9 @@ Source: "{{SOURCE_DIR}}\\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdi
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"
-Name: "{autodesktop}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; Tasks: desktopicon
-Name: "{userstartup}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; WorkingDir: "{app}"; Tasks: launchAtStartup
+Name: "{autoprograms}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}" {% if PROGRAM_PARAMETERS != true %}Parameters: "{{PROGRAM_PARAMETERS}}";{% endif %}
+Name: "{autodesktop}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; {% if DESKTOP_PARAMETERS != true %}Parameters: "{{DESKTOP_PARAMETERS}}";{% endif %} Tasks: desktopicon
+Name: "{userstartup}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; WorkingDir: "{app}"; {% if STARTUP_PARAMETERS != true %}Parameters: "{{STARTUP_PARAMETERS}}";{% endif %} Tasks: launchAtStartup
 [Run]
 Filename: "{app}\\{{EXECUTABLE_NAME}}"; Description: "{cm:LaunchProgram,{{DISPLAY_NAME}}}"; Flags: {% if PRIVILEGES_REQUIRED == 'admin' %}runascurrentuser{% endif %} nowait postinstall skipifsilent
 """;
@@ -81,6 +81,9 @@ class InnoSetupScript {
       'LOCALES': makeConfig.locales,
       'SETUP_ICON_FILE': makeConfig.setupIconFile ?? "",
       'PRIVILEGES_REQUIRED': makeConfig.privilegesRequired ?? "none"
+      'PROGRAM_PARAMETERS': makeConfig.programParameters ?? "",
+      'DESKTOP_PARAMETERS': makeConfig.desktopParameters ?? "",
+      'STARTUP_PARAMETERS': makeConfig.startupParameters ?? "",
     }..removeWhere((key, value) => value == null);
 
     Context context = Context.create();
